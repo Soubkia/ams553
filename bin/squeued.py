@@ -55,7 +55,11 @@ def main():
     with shelve.open(args.output) as db:
         while True:
             jids = set(db.keys())
-            jobs = squeue()
+            try:
+                jobs = squeue()
+            except Exception as exc:
+                log.error(exc, exc_info=True)
+                continue
             for job in jobs:
                 db[str(job["JOBID"])] = job
             running_jids = {str(job["JOBID"]) for job in jobs}
